@@ -1,0 +1,10 @@
+numpy
+pandas
+seaborn
+statsmodels
+matplotlib
+feature-engine
+scikit-learn
+xgboost
+yellowbrick
+openpyxl
