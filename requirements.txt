@@ -8,3 +8,5 @@ scikit-learn
 xgboost
 yellowbrick
 openpyxl
+ydata_profiling
+ipywidgets
