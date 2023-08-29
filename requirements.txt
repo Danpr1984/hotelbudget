@@ -10,3 +10,5 @@ yellowbrick
 openpyxl
 ydata_profiling
 ipywidgets
+prophet
+pingouin
