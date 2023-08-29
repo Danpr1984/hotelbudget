@@ -12,3 +12,4 @@ ydata_profiling
 ipywidgets
 prophet
 pingouin
+ppscore
