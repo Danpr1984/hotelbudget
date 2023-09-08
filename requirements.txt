@@ -13,3 +13,4 @@ ipywidgets
 prophet
 pingouin
 ppscore
+joblib
