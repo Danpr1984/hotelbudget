@@ -5,6 +5,7 @@ statsmodels
 matplotlib
 feature-engine
 scikit-learn
+pygwalker
 xgboost
 yellowbrick
 openpyxl
