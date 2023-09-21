@@ -73,62 +73,63 @@ def methodology_and_analysis_page():
     st.subheader("Data Separation")
     st.write("We separated the data to create models separately, focusing on the variables needed for each model.")
 
-
-import streamlit as st
-import joblib
-
 # Load the occupancy model
 occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
+food_andbev_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
 
-# Define ML Revenue Page
-import streamlit as st
-import joblib
+# Define a function to predict occupancy and room revenue
+def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, number_of_rooms, number_of_days, room_rate):
+    # Calculate occupancy percentage
+    input_data_occupancy = {
+        'Marketing': marketing,
+        'Seasonality': seasonality,
+        'Average Room Rate': average_room_rate,
+    }
+    predicted_occupancy = occupancy_model.predict([list(input_data_occupancy.values())])[0]
 
-# Load the occupancy model
-occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
+    # Calculate room revenue
+    room_revenue = predicted_occupancy * number_of_rooms * number_of_days * room_rate
 
-# Define ML Revenue Page
-import streamlit as st
-import joblib
-
-# Load the occupancy model
-occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
-
+    return predicted_occupancy, room_revenue
+def predict_food_andbev(percentage_fb, room_revenue, predicted_occupancy )
 # Define ML Revenue Page
 def ml_revenue_page():
     st.title("ML Revenue Page")
 
     # Input widgets for occupancy prediction
-    st.header("Occupancy Prediction")
+    st.header("Occupancy % & Room Revenue Prediction")
 
-    # Marketing
-   
-    marketing_value = st.slider("Marketing (0-5000)", 0, 5000, step=100)
-
-    # Seasonality
-    seasonality_label = st.selectbox("Seasonality", ("Low", "Medium", "High"))
+    #Season
+    seasonality_label = st.selectbox("Select the Season", ("Low", "Medium", "High"))
     seasonality_value = {"Low": 0, "Medium": 1, "High": 2}[seasonality_label]
 
-    average_room_rate_value = st.slider("Average Room Rate", 50, 150, step=10)
+    # Marketing
+    marketing_value = st.slider("Marketing Investment USD$ (0-500)", 0, 500, step=50)
 
-    # Calculate occupancy percentage
-    input_data_occupancy = [[marketing_value, seasonality_value, average_room_rate_value / 100]]
-    predicted_occupancy = occupancy_model.predict(input_data_occupancy)
+    # Average Room Rate
+    average_room_rate_value = st.number_input("Average Room Rate USD$", min_value=50, max_value=120, value=100)
+
+    number_of_rooms = st.number_input("Number of Rooms", value=9)
+    number_of_days = st.number_input("Number of Days", value=30)
+    room_rate = average_room_rate_value
+
+    # Calculate occupancy and room revenue using the custom function
+    predicted_occupancy, room_revenue = predict_occupancy_and_revenue(
+        marketing_value,
+        seasonality_value,
+        average_room_rate_value,
+        number_of_rooms,
+        number_of_days,
+        room_rate,
+    )
 
     st.subheader("Predicted Occupancy %")
-    st.write(f"The predicted occupancy percentage is: {predicted_occupancy[0] * 100:.2f}%")
-
-    # Input widgets for room revenue prediction
-    st.header("Room Revenue Prediction")
-    number_of_rooms = st.number_input("Number of Rooms", value=100)
-    number_of_days = st.number_input("Number of Days", value=30)
-    room_rate = st.number_input("Room Rate", value=100)
-
-    # Calculate room revenue
-    room_revenue = predicted_occupancy[0] * number_of_rooms * number_of_days * room_rate
+    st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
 
     st.subheader("Predicted Room Revenue")
     st.write(f"The predicted room revenue is: ${room_revenue:.2f}")
+
+# Rest of your Streamlit app code...
 
 
 def ml_expenses_and_gop_page():
