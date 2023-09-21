@@ -75,7 +75,8 @@ def methodology_and_analysis_page():
 
 # Load the occupancy model
 occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
-food_andbev_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
+fb_occ_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_occ_model.pkl')
+fb_revenue_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_revenue_model.pkl')
 
 # Define a function to predict occupancy and room revenue
 def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, number_of_rooms, number_of_days, room_rate):
@@ -91,13 +92,36 @@ def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, num
     room_revenue = predicted_occupancy * number_of_rooms * number_of_days * room_rate
 
     return predicted_occupancy, room_revenue
-def predict_food_andbev(percentage_fb, room_revenue, predicted_occupancy )
+
+# Define a function to predict F&B occupancy
+def predict_fb_occupancy(rooms_revenue, rooms_occupancy, seasonality, holidays_local):
+    input_data_fb_occ = {
+        'Rooms Revenue': rooms_revenue,
+        'Percentage Rooms Occ %': rooms_occupancy,
+        'Seasonality': seasonality,
+        'Holidays Local': holidays_local,
+    }
+    fb_occupancy = fb_occ_model.predict([list(input_data_fb_occ.values())])[0]
+    return fb_occupancy
+
+# Define a function to predict F&B revenue
+def predict_fb_revenue(rooms_revenue, seasonality, holidays_local, rooms_occupancy, fb_occupancy):
+    input_data_fb_revenue = {
+        'Rooms Revenue': rooms_revenue,
+        'Seasonality': seasonality,
+        'Holidays Local': holidays_local,
+        'Percentage Rooms Occ %': rooms_occupancy,
+        'Percentage F&B Occ %': fb_occupancy,
+    }
+    fb_revenue = fb_revenue_model.predict([list(input_data_fb_revenue.values())])[0]
+    return fb_revenue
+
 # Define ML Revenue Page
 def ml_revenue_page():
     st.title("ML Revenue Page")
 
     # Input widgets for occupancy prediction
-    st.header("Occupancy % & Room Revenue Prediction")
+    st.header("Occupancy % & Revenue Prediction")
 
     #Season
     seasonality_label = st.selectbox("Select the Season", ("Low", "Medium", "High"))
@@ -122,6 +146,7 @@ def ml_revenue_page():
         number_of_days,
         room_rate,
     )
+    holidays_local = st.slider("Local Holidays", 0, 10, step=1)
 
     st.subheader("Predicted Occupancy %")
     st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
@@ -129,8 +154,36 @@ def ml_revenue_page():
     st.subheader("Predicted Room Revenue")
     st.write(f"The predicted room revenue is: ${room_revenue:.2f}")
 
-# Rest of your Streamlit app code...
 
+
+# Calculate F&B Occupancy using the custom function
+    predicted_fb_occupancy = predict_fb_occupancy(
+        room_revenue,  # Reuse rooms revenue from room revenue prediction
+        predicted_occupancy,  # Reuse predicted occupancy from room occupancy prediction
+        seasonality_value,  # Use the selected seasonality from the ML Revenue page
+        holidays_local,  
+    )
+
+    #st.subheader("Predicted F&B Occupancy %")
+    #st.write(f"The predicted F&B occupancy percentage is: {predicted_fb_occupancy * 100:.2f}%")
+
+# Calculate F&B revenue using the custom function
+    fb_revenue = predict_fb_revenue(
+    room_revenue, 
+    seasonality_value, 
+    holidays_local, 
+    predicted_occupancy, 
+    predicted_fb_occupancy)
+
+    st.subheader("Predicted F&B Revenue")
+    st.write(f"The predicted F&B revenue is: ${fb_revenue:.2f}")
+
+    # Calculate Total Revenue
+    total_revenue = room_revenue + fb_revenue
+
+# Display Total Revenue
+    st.subheader("Total Revenue")
+    st.write(f"The total revenue is: ${total_revenue:.2f}")
 
 def ml_expenses_and_gop_page():
     st.title("ML Expenses and GOP")
