@@ -2,6 +2,9 @@ import streamlit as st
 import pandas as pd 
 import joblib
 
+if 'total_revenue' not in st.session_state:
+    st.session_state.total_revenue = 0  # Initialize total_revenue to 0 or any default value you prefer
+
 # Define Pages
 # Define Quick Summary Page
 def quick_summary_page():
@@ -205,9 +208,55 @@ def ml_revenue_page():
     st.subheader("Total Revenue")
     st.write(f"The total revenue is: ${total_revenue:.2f}")
 
+    
+
+#Expenses Model
+
+op_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/expenses_model.pkl')
+
+def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing):
+    input_data_ops_exp = {
+    'Total Revenue': total_revenue,
+    'Total Wages': total_wages,
+    'Insuraces': insurances,  
+    'Transport': transport,
+    'Marketing': marketing
+    }
+
+    ops_expenses = op_expenses_model.predict([list(input_data_ops_exp.values())])[0]
+    return ops_expenses
+
+
 def ml_expenses_and_gop_page():
     st.title("ML Expenses and GOP")
     # Add content for the ML Expenses and GOP page here
+
+    # Input widgets for manual input
+    st.header("Manual Input")
+    
+    # Manual input for Total Revenue (from the previous page)
+    total_revenue = st.session_state.total_revenue
+    
+    # Manual input for Total Wages
+    total_wages = st.number_input("Total Wages", min_value=0.0)
+    
+    # Manual input for Insurances
+    insurances = st.number_input("Insurances", min_value=0.0)
+    
+    # Manual input for Transport
+    transport = st.number_input("Transport", min_value=0.0)
+    
+    # Manual input for Marketing Investment
+    marketing = st.number_input("Marketing Investment", min_value=0.0)
+    
+    # Calculate operational expenses using the predict_ops_expenses function
+    if st.button("Calculate Operational Expenses"):
+        ops_expenses = predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing)
+        
+        st.subheader("Operational Expenses")
+        st.write(f"The estimated operational expenses are: ${ops_expenses:.2f}")
+
+
 
 def conclusion_page():
     st.title("Conclusion")
