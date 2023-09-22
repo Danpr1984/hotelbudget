@@ -79,12 +79,14 @@ fb_occ_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_occ_mod
 fb_revenue_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_revenue_model.pkl')
 
 # Define a function to predict occupancy and room revenue
-def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, number_of_rooms, number_of_days, room_rate):
+def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, rainy_season, holidays_local, number_of_rooms, number_of_days, room_rate):
     # Calculate occupancy percentage
     input_data_occupancy = {
         'Marketing': marketing,
         'Seasonality': seasonality,
         'Average Room Rate': average_room_rate,
+        'Local Rainy Season': rainy_season,
+        'Holidays Local': holidays_local,
     }
     predicted_occupancy = occupancy_model.predict([list(input_data_occupancy.values())])[0]
 
@@ -94,12 +96,14 @@ def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, num
     return predicted_occupancy, room_revenue
 
 # Define a function to predict F&B occupancy
-def predict_fb_occupancy(rooms_revenue, rooms_occupancy, seasonality, holidays_local):
+def predict_fb_occupancy(rooms_revenue, holidays_local, rooms_occupancy, seasonality, rainy_season ):
     input_data_fb_occ = {
         'Rooms Revenue': rooms_revenue,
+        'Holidays Local': holidays_local,
         'Percentage Rooms Occ %': rooms_occupancy,
         'Seasonality': seasonality,
-        'Holidays Local': holidays_local,
+        'Local Rainy Season': rainy_season,
+        
     }
     fb_occupancy = fb_occ_model.predict([list(input_data_fb_occ.values())])[0]
     return fb_occupancy
@@ -133,21 +137,36 @@ def ml_revenue_page():
     # Average Room Rate
     average_room_rate_value = st.number_input("Average Room Rate USD$", min_value=50, max_value=120, value=100)
 
+    
+    # Local Rainy Season
+    rainy_season_label = st.selectbox("Select the Local Rainy Season", list({'No Rain': 0, 'Moderate': 1, 'Heavy Rain': 2}.keys()))
+    rainy_season_mapping = {'No Rain': 0, 'Moderate': 1, 'Heavy Rain': 2}
+    rainy_season = rainy_season_mapping[rainy_season_label]
+
+    #Rooms
     number_of_rooms = st.number_input("Number of Rooms", value=9)
     number_of_days = st.number_input("Number of Days", value=30)
     room_rate = average_room_rate_value
 
+    # Define the rainy_season variable here
+    rainy_season = rainy_season_mapping[rainy_season_label]
+
+    holidays_local = st.slider("Local Holidays", 0, 10, step=1)
+
+
+    
     # Calculate occupancy and room revenue using the custom function
     predicted_occupancy, room_revenue = predict_occupancy_and_revenue(
         marketing_value,
         seasonality_value,
         average_room_rate_value,
+        rainy_season,
+        holidays_local,
         number_of_rooms,
         number_of_days,
         room_rate,
     )
-    holidays_local = st.slider("Local Holidays", 0, 10, step=1)
-
+    
     st.subheader("Predicted Occupancy %")
     st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
 
@@ -162,6 +181,7 @@ def ml_revenue_page():
         predicted_occupancy,  # Reuse predicted occupancy from room occupancy prediction
         seasonality_value,  # Use the selected seasonality from the ML Revenue page
         holidays_local,  
+        rainy_season,
     )
 
     #st.subheader("Predicted F&B Occupancy %")
