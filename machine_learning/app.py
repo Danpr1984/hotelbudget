@@ -8,6 +8,11 @@ if 'room_revenue' not in st.session_state:
     st.session_state.room_revenue = 0   
 if 'fb_revenue' not in st.session_state:
     st.session_state.fb_revenue = 0    
+if 'marketing_value' not in st.session_state:
+    st.session_state.marketing_value = 0
+if 'number_of_days' not in st.session_state:
+    st.session_state.number_of_days = 0
+
 
 # Define Pages
 # Define Quick Summary Page
@@ -211,6 +216,8 @@ def ml_revenue_page():
         st.session_state.room_revenue = room_revenue
         st.session_state.total_revenue = total_revenue
         st.session_state.fb_revenue = fb_revenue
+        st.session_state.marketing_value = marketing_value
+        st.session_state.number_of_days = number_of_days
 
 # Display Total Revenue
         st.subheader("Total Revenue")
@@ -256,59 +263,69 @@ def predict_fb_expenses(fb_revenue):
 def ml_expenses_and_gop_page():
     st.title("ML Expenses and GOP")
     # Add content for the ML Expenses and GOP page here
-
-    # Input widgets for manual input
-    st.header("Manual Input")
     
     # Manual input for Total Revenue (from the previous page)
     total_revenue = st.session_state.total_revenue
     room_revenue = st.session_state.room_revenue
     fb_revenue = st.session_state.fb_revenue 
+    marketing_value = st.session_state.marketing_value
+    number_of_days = st.session_state.number_of_days
 
     # Display Total Revenue
-    st.subheader("Total Revenue")
     st.write(f"The total revenue is: ${total_revenue:.2f}")
 
     # Display Rooms Revenue
-    st.subheader("Rooms Revenue")
     st.write(f"The rooms revenue is: ${room_revenue:.2f}")
 
     # Display Rooms Revenue
-    st.subheader("F&B Revenue")
     st.write(f"The F&B revenue is: ${fb_revenue:.2f}")
-    
+
+    # Input widgets for manual input
+    st.write(f"Fill expenses projection for {number_of_days} days")
+
+    # Manual input for Marketing Investment
+    marketing = st.number_input("Marketing Investment", marketing_value)
+
     # Manual input for Total Wages
-    total_wages = st.number_input("Total Wages", min_value=0.0)
+    total_wages = st.number_input("Total Wages", min_value=0)
     
     # Manual input for Insurances
-    insurances = st.number_input("Insurances", min_value=0.0)
+    insurances = st.number_input("Insurances", min_value=0)
     
     # Manual input for Transport
-    transport = st.number_input("Transport", min_value=0.0)
+    transport = st.number_input("Transport", min_value=0)
     
-    # Manual input for Marketing Investment
-    marketing = st.number_input("Marketing Investment", min_value=0.0)
+
     
     # Calculate operational expenses using the predict_ops_expenses function
     if st.button("Calculate Operational Expenses"):
         ops_expenses = predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing)
 
-        st.subheader("Operational Expenses")
+        
         st.write(f"The estimated operational expenses are: ${ops_expenses:.2f}")
 
         # Calculate room expenses using the custom function
         room_expenses = predict_rooms_expenses(room_revenue)
 
     # Display Room Expenses
-        st.subheader("Predicted Rooms Expenses")
         st.write(f"The predicted room expenses are: ${room_expenses:.2f}")
 
     # Calculate f&b expenses using the custom function
         fb_expenses = predict_fb_expenses(fb_revenue)  
 
     # Display Room Expenses
-        st.subheader("Predicted F&B Expenses")
-        st.write(f"The predicted f&b expenses are: ${fb_expenses:.2f}")          
+        st.write(f"The predicted f&b expenses are: ${fb_expenses:.2f}")   
+
+        total_expenses =  ops_expenses + room_expenses + fb_expenses  
+        gross_operating_profit = total_revenue - total_expenses
+        gop_margin = total_expenses / total_revenue
+
+        # Display Total Expenses
+        st.subheader(f"The total expenses are: ${total_expenses:.2f}") 
+
+        # Display Total Expenses
+        st.subheader(f"The total GOP is: ${gross_operating_profit:.2f} representing a margin of: {gop_margin * 100:.2f}%")     
+
 
 def conclusion_page():
     st.title("Conclusion")
