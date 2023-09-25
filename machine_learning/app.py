@@ -4,6 +4,10 @@ import joblib
 
 if 'total_revenue' not in st.session_state:
     st.session_state.total_revenue = 0  # Initialize total_revenue to 0 or any default value you prefer
+if 'room_revenue' not in st.session_state:
+    st.session_state.room_revenue = 0   
+if 'fb_revenue' not in st.session_state:
+    st.session_state.fb_revenue = 0    
 
 # Define Pages
 # Define Quick Summary Page
@@ -99,9 +103,9 @@ def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, rai
     return predicted_occupancy, room_revenue
 
 # Define a function to predict F&B occupancy
-def predict_fb_occupancy(rooms_revenue, holidays_local, rooms_occupancy, seasonality, rainy_season ):
+def predict_fb_occupancy(room_revenue, holidays_local, rooms_occupancy, seasonality, rainy_season ):
     input_data_fb_occ = {
-        'Rooms Revenue': rooms_revenue,
+        'Rooms Revenue': room_revenue,
         'Holidays Local': holidays_local,
         'Percentage Rooms Occ %': rooms_occupancy,
         'Seasonality': seasonality,
@@ -112,9 +116,9 @@ def predict_fb_occupancy(rooms_revenue, holidays_local, rooms_occupancy, seasona
     return fb_occupancy
 
 # Define a function to predict F&B revenue
-def predict_fb_revenue(rooms_revenue, seasonality, holidays_local, rooms_occupancy, fb_occupancy):
+def predict_fb_revenue(room_revenue, seasonality, holidays_local, rooms_occupancy, fb_occupancy):
     input_data_fb_revenue = {
-        'Rooms Revenue': rooms_revenue,
+        'Rooms Revenue': room_revenue,
         'Seasonality': seasonality,
         'Holidays Local': holidays_local,
         'Percentage Rooms Occ %': rooms_occupancy,
@@ -156,63 +160,69 @@ def ml_revenue_page():
 
     holidays_local = st.slider("Local Holidays", 0, 10, step=1)
 
-
+    if st.button("Calculate Occupancy and Revenue"):
     
     # Calculate occupancy and room revenue using the custom function
-    predicted_occupancy, room_revenue = predict_occupancy_and_revenue(
-        marketing_value,
-        seasonality_value,
-        average_room_rate_value,
-        rainy_season,
-        holidays_local,
-        number_of_rooms,
-        number_of_days,
-        room_rate,
-    )
+        predicted_occupancy, room_revenue = predict_occupancy_and_revenue(
+            marketing_value,
+            seasonality_value,
+            average_room_rate_value,
+            rainy_season,
+            holidays_local,
+            number_of_rooms,
+            number_of_days,
+            room_rate,
+        )
     
-    st.subheader("Predicted Occupancy %")
-    st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
+        st.subheader("Predicted Occupancy %")
+        st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
 
-    st.subheader("Predicted Room Revenue")
-    st.write(f"The predicted room revenue is: ${room_revenue:.2f}")
+        st.subheader("Predicted Room Revenue")
+        st.write(f"The predicted room revenue is: ${room_revenue:.2f}")
 
 
 
 # Calculate F&B Occupancy using the custom function
-    predicted_fb_occupancy = predict_fb_occupancy(
-        room_revenue,  # Reuse rooms revenue from room revenue prediction
-        predicted_occupancy,  # Reuse predicted occupancy from room occupancy prediction
-        seasonality_value,  # Use the selected seasonality from the ML Revenue page
-        holidays_local,  
-        rainy_season,
-    )
+        predicted_fb_occupancy = predict_fb_occupancy(
+            room_revenue,  # Reuse rooms revenue from room revenue prediction
+            predicted_occupancy,  # Reuse predicted occupancy from room occupancy prediction
+            seasonality_value,  # Use the selected seasonality from the ML Revenue page
+            holidays_local,  
+            rainy_season,
+        )
 
     #st.subheader("Predicted F&B Occupancy %")
     #st.write(f"The predicted F&B occupancy percentage is: {predicted_fb_occupancy * 100:.2f}%")
 
 # Calculate F&B revenue using the custom function
-    fb_revenue = predict_fb_revenue(
-    room_revenue, 
-    seasonality_value, 
-    holidays_local, 
-    predicted_occupancy, 
-    predicted_fb_occupancy)
+        fb_revenue = predict_fb_revenue(
+            room_revenue, 
+            seasonality_value, 
+            holidays_local, 
+            predicted_occupancy, 
+            predicted_fb_occupancy)
 
-    st.subheader("Predicted F&B Revenue")
-    st.write(f"The predicted F&B revenue is: ${fb_revenue:.2f}")
+        st.subheader("Predicted F&B Revenue")
+        st.write(f"The predicted F&B revenue is: ${fb_revenue:.2f}")
 
     # Calculate Total Revenue
-    total_revenue = room_revenue + fb_revenue
+        total_revenue = room_revenue + fb_revenue
+
+        st.session_state.room_revenue = room_revenue
+        st.session_state.total_revenue = total_revenue
+        st.session_state.fb_revenue = fb_revenue
 
 # Display Total Revenue
-    st.subheader("Total Revenue")
-    st.write(f"The total revenue is: ${total_revenue:.2f}")
+        st.subheader("Total Revenue")
+        st.write(f"The total revenue is: ${total_revenue:.2f}")
 
     
 
-#Expenses Model
+#Expenses Models
 
 op_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/expenses_model.pkl')
+rooms_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/rooms_expenses_model.pkl')
+fb_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/fb_expenses_model.pkl')
 
 def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing):
     input_data_ops_exp = {
@@ -227,6 +237,22 @@ def predict_ops_expenses(total_revenue, total_wages, insurances, transport, mark
     return ops_expenses
 
 
+# Define a function to predict room expenses
+def predict_rooms_expenses(room_revenue):
+    input_data_rooms_expenses = {
+        'Rooms Revenue': room_revenue
+    }
+    rooms_expenses = rooms_expenses_model.predict([list(input_data_rooms_expenses.values())])[0]
+    return rooms_expenses
+
+# Define a function to predict fb expenses
+def predict_fb_expenses(fb_revenue):
+    input_data_fb_expenses = {
+        'F&B Revenue': fb_revenue
+    }
+    fb_expenses = fb_expenses_model.predict([list(input_data_fb_expenses.values())])[0]
+    return fb_expenses
+
 def ml_expenses_and_gop_page():
     st.title("ML Expenses and GOP")
     # Add content for the ML Expenses and GOP page here
@@ -236,6 +262,20 @@ def ml_expenses_and_gop_page():
     
     # Manual input for Total Revenue (from the previous page)
     total_revenue = st.session_state.total_revenue
+    room_revenue = st.session_state.room_revenue
+    fb_revenue = st.session_state.fb_revenue 
+
+    # Display Total Revenue
+    st.subheader("Total Revenue")
+    st.write(f"The total revenue is: ${total_revenue:.2f}")
+
+    # Display Rooms Revenue
+    st.subheader("Rooms Revenue")
+    st.write(f"The rooms revenue is: ${room_revenue:.2f}")
+
+    # Display Rooms Revenue
+    st.subheader("F&B Revenue")
+    st.write(f"The F&B revenue is: ${fb_revenue:.2f}")
     
     # Manual input for Total Wages
     total_wages = st.number_input("Total Wages", min_value=0.0)
@@ -252,11 +292,23 @@ def ml_expenses_and_gop_page():
     # Calculate operational expenses using the predict_ops_expenses function
     if st.button("Calculate Operational Expenses"):
         ops_expenses = predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing)
-        
+
         st.subheader("Operational Expenses")
         st.write(f"The estimated operational expenses are: ${ops_expenses:.2f}")
 
+        # Calculate room expenses using the custom function
+        room_expenses = predict_rooms_expenses(room_revenue)
 
+    # Display Room Expenses
+        st.subheader("Predicted Rooms Expenses")
+        st.write(f"The predicted room expenses are: ${room_expenses:.2f}")
+
+    # Calculate f&b expenses using the custom function
+        fb_expenses = predict_fb_expenses(fb_revenue)  
+
+    # Display Room Expenses
+        st.subheader("Predicted F&B Expenses")
+        st.write(f"The predicted f&b expenses are: ${fb_expenses:.2f}")          
 
 def conclusion_page():
     st.title("Conclusion")
