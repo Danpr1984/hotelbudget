@@ -6,6 +6,10 @@ import joblib
 if 'current_page' not in st.session_state:
     st.session_state.current_page = "Quick Summary"
 
+# Create session state variable for selected quarter
+if 'selected_quarter' not in st.session_state:
+    st.session_state.selected_quarter = None
+
 if 'total_revenue' not in st.session_state:
     st.session_state.total_revenue = 0  # Initialize total_revenue to 0 or any default value you prefer
 if 'room_revenue' not in st.session_state:
@@ -16,6 +20,20 @@ if 'marketing_value' not in st.session_state:
     st.session_state.marketing_value = 0
 if 'number_of_days' not in st.session_state:
     st.session_state.number_of_days = 0
+
+# Create session state variables to track calculated values and selected month
+if 'calculated_values' not in st.session_state:
+    st.session_state.calculated_values = {
+        "Total Revenue": 0,
+        "Rooms Revenue": 0,
+        "F&B Revenue": 0,
+        "Operations Expenses": 0,
+        "Rooms Expenses": 0,
+        "F&B Expenses": 0,
+    }
+
+if 'selected_month' not in st.session_state:
+    st.session_state.selected_month = "January"
 
 
 # Define Pages
@@ -136,19 +154,6 @@ def predict_fb_revenue(room_revenue, seasonality, holidays_local, rooms_occupanc
     fb_revenue = fb_revenue_model.predict([list(input_data_fb_revenue.values())])[0]
     return fb_revenue
 
-# Create session state variables to track calculated values and selected month
-if 'calculated_values' not in st.session_state:
-    st.session_state.calculated_values = {
-        "Total Revenue": 0,
-        "Rooms Revenue": 0,
-        "F&B Revenue": 0,
-        "Operations Expenses": 0,
-        "Rooms Expenses": 0,
-        "F&B Expenses": 0,
-    }
-
-if 'selected_month' not in st.session_state:
-    st.session_state.selected_month = "January"
 
 # Define ML Revenue Page
 def ml_revenue_page():
@@ -359,6 +364,10 @@ def ml_expenses_and_gop_page():
         st.write(f"The predicted f&b expenses are: ${fb_expenses:.2f}")   
 
         total_expenses =  ops_expenses + room_expenses + fb_expenses  
+
+        # Add "Total Expenses" to the calculated_values dictionary
+        st.session_state.calculated_values[selected_month]["Total Expenses"] = total_expenses
+
         gross_operating_profit = total_revenue - total_expenses
         gop_margin = total_expenses / total_revenue
 
@@ -378,29 +387,63 @@ def ml_expenses_and_gop_page():
         st.session_state.calculated_values[selected_month]["Total Expenses"] = total_expenses   
 
 
-
+# Define Yearly Prediction Page
 def yearly_prediction_page():
     st.title("Yearly Prediction")
 
-    # Check if "January" exists in calculated_values
-    if "January" in st.session_state.calculated_values:
-        # Display a table with the values for January
-        st.subheader("Data for January")
-        january_data = st.session_state.calculated_values["January"]
-        january_df = pd.DataFrame(january_data.items(), columns=["Category", "Value"])
-        st.dataframe(january_df)
+    total_totals = {
+        "Total Revenue": 0,
+        "Rooms Revenue": 0,
+        "F&B Revenue": 0,
+        "Operations Expenses": 0,
+        "Rooms Expenses": 0,
+        "F&B Expenses": 0,
+        "Total Expenses": 0
+    }
 
-    # Dropdown to select the month
-    selected_month = st.selectbox("Select a Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+    all_months = [
+        "January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"
+    ]
 
-    # Display data for the selected month
-    st.header(f"Data for {selected_month}")
+    # Create tables for each row of months
+    num_cols = 3
 
-    # Display stored data for the selected month
-    st.subheader("Stored Data")
-    selected_month_data = st.session_state.calculated_values.get(selected_month, {})
-    for key, value in selected_month_data.items():
-        st.write(f"{key}: ${value:.2f}")
+    for i in range(0, len(all_months), num_cols):
+        month_slice = all_months[i:i + num_cols]
+        st.subheader(" | ".join(month_slice))
+        data = []
+        
+        for key in ["Total Revenue", "Rooms Revenue", "F&B Revenue", "Operations Expenses", "Rooms Expenses", "F&B Expenses"]:
+            values = []
+            for month in month_slice:
+                if month in st.session_state.calculated_values:
+                    value = st.session_state.calculated_values[month].get(key, 0)
+                    values.append(f"${value:.2f}")
+                else:
+                    values.append("$0.00")
+            data.append(values)
+
+        # Create a DataFrame for the table
+        df = pd.DataFrame(data, columns=month_slice, index=["Total Revenue", "Rooms Revenue", "F&B Revenue", "Operations Expenses", "Rooms Expenses", "F&B Expenses"])
+        st.dataframe(df, use_container_width=True)
+
+        # Add a separator between tables
+        st.write("---")
+
+    # Calculate and display the totals table
+    st.header("Monthly Totals")
+    
+    for month in all_months:
+        if month in st.session_state.calculated_values:
+            month_data = st.session_state.calculated_values[month]
+            for key, value in month_data.items():
+                total_totals[key] += value
+
+    # Create a DataFrame for the totals table
+    totals_df = pd.DataFrame.from_dict(total_totals, orient='index', columns=['Total'])
+    st.write("Totals")
+    st.dataframe(totals_df, use_container_width=True)
 
 
 def conclusion_page():
