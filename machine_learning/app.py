@@ -2,6 +2,10 @@ import streamlit as st
 import pandas as pd 
 import joblib
 
+# Initialize session state variables for page navigation
+if 'current_page' not in st.session_state:
+    st.session_state.current_page = "Quick Summary"
+
 if 'total_revenue' not in st.session_state:
     st.session_state.total_revenue = 0  # Initialize total_revenue to 0 or any default value you prefer
 if 'room_revenue' not in st.session_state:
@@ -132,12 +136,29 @@ def predict_fb_revenue(room_revenue, seasonality, holidays_local, rooms_occupanc
     fb_revenue = fb_revenue_model.predict([list(input_data_fb_revenue.values())])[0]
     return fb_revenue
 
+# Create session state variables to track calculated values and selected month
+if 'calculated_values' not in st.session_state:
+    st.session_state.calculated_values = {
+        "Total Revenue": 0,
+        "Rooms Revenue": 0,
+        "F&B Revenue": 0,
+        "Operations Expenses": 0,
+        "Rooms Expenses": 0,
+        "F&B Expenses": 0,
+    }
+
+if 'selected_month' not in st.session_state:
+    st.session_state.selected_month = "January"
+
 # Define ML Revenue Page
 def ml_revenue_page():
-    st.title("ML Revenue Page")
+    st.header("ML Revenue Page")
 
     # Input widgets for occupancy prediction
-    st.header("Occupancy % & Revenue Prediction")
+    st.subheader("Occupancy % & Revenue Prediction")
+
+    selected_month = st.selectbox("Select a Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
+
 
     #Season
     seasonality_label = st.selectbox("Select the Season", ("Low", "Medium", "High"))
@@ -223,7 +244,15 @@ def ml_revenue_page():
         st.subheader("Total Revenue")
         st.write(f"The total revenue is: ${total_revenue:.2f}")
 
-    
+        # Update the st.session_state.calculated_values dictionary
+        if selected_month not in st.session_state.calculated_values:
+            st.session_state.calculated_values[selected_month] = {}
+
+            # Update the st.session_state.calculated_values dictionary
+        st.session_state.calculated_values[selected_month]["Total Revenue"] = total_revenue
+        st.session_state.calculated_values[selected_month]["Rooms Revenue"] = room_revenue
+        st.session_state.calculated_values[selected_month]["F&B Revenue"] = fb_revenue
+
 
 #Expenses Models
 
@@ -231,13 +260,16 @@ op_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/expens
 rooms_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/rooms_expenses_model.pkl')
 fb_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/fb_expenses_model.pkl')
 
-def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing):
+def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing, maintenance, utilities, systems_communications):
     input_data_ops_exp = {
     'Total Revenue': total_revenue,
     'Total Wages': total_wages,
     'Insuraces': insurances,  
     'Transport': transport,
-    'Marketing': marketing
+    'Marketing': marketing,
+    'Maintenance': maintenance,
+    'Utilities Expenses':utilities, 
+    'Systems & Communications':systems_communications,
     }
 
     ops_expenses = op_expenses_model.predict([list(input_data_ops_exp.values())])[0]
@@ -263,7 +295,8 @@ def predict_fb_expenses(fb_revenue):
 def ml_expenses_and_gop_page():
     st.title("ML Expenses and GOP")
     # Add content for the ML Expenses and GOP page here
-    
+
+    selected_month = st.selectbox("Select a Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
     # Manual input for Total Revenue (from the previous page)
     total_revenue = st.session_state.total_revenue
     room_revenue = st.session_state.room_revenue
@@ -294,12 +327,21 @@ def ml_expenses_and_gop_page():
     
     # Manual input for Transport
     transport = st.number_input("Transport", min_value=0)
+
+    # Manual input for Maintenance
+    maintenance = st.number_input("Maintenance", min_value=0)
+
+    # Manual input for Utilities Expenses
+    utilities = st.number_input("Utilities Expenses", min_value=0)
+
+    systems_communications = st.number_input("Systems & Communications", min_value=0)
     
 
     
     # Calculate operational expenses using the predict_ops_expenses function
     if st.button("Calculate Operational Expenses"):
-        ops_expenses = predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing)
+        ops_expenses = predict_ops_expenses(total_revenue, total_wages, insurances, transport, 
+        marketing, maintenance, utilities, systems_communications)
 
         
         st.write(f"The estimated operational expenses are: ${ops_expenses:.2f}")
@@ -324,15 +366,55 @@ def ml_expenses_and_gop_page():
         st.subheader(f"The total expenses are: ${total_expenses:.2f}") 
 
         # Display Total Expenses
-        st.subheader(f"The total GOP is: ${gross_operating_profit:.2f} representing a margin of: {gop_margin * 100:.2f}%")     
+        st.subheader(f"The total GOP is: ${gross_operating_profit:.2f} representing a margin of: {gop_margin * 100:.2f}%")
+
+        # Update the st.session_state.calculated_values dictionary
+        if selected_month not in st.session_state.calculated_values:
+            st.session_state.calculated_values[selected_month] = {}  
+            # Update the st.session_state.calculated_values dictionary
+        st.session_state.calculated_values[selected_month]["Operations Expenses"] = ops_expenses
+        st.session_state.calculated_values[selected_month]["Rooms Expenses"] = room_expenses
+        st.session_state.calculated_values[selected_month]["F&B Expenses"] = fb_expenses
+        st.session_state.calculated_values[selected_month]["Total Expenses"] = total_expenses   
+
+
+
+def yearly_prediction_page():
+    st.title("Yearly Prediction")
+
+    # Check if "January" exists in calculated_values
+    if "January" in st.session_state.calculated_values:
+        # Display a table with the values for January
+        st.subheader("Data for January")
+        january_data = st.session_state.calculated_values["January"]
+        january_df = pd.DataFrame(january_data.items(), columns=["Category", "Value"])
+        st.dataframe(january_df)
+
+    # Dropdown to select the month
+    selected_month = st.selectbox("Select a Month", list(st.session_state.calculated_values.keys()))
+
+    # Display data for the selected month
+    st.header(f"Data for {selected_month}")
+
+    # Display stored data for the selected month
+    st.subheader("Stored Data")
+    selected_month_data = st.session_state.calculated_values.get(selected_month, {})
+    for key, value in selected_month_data.items():
+        st.write(f"{key}: ${value:.2f}")
 
 
 def conclusion_page():
     st.title("Conclusion")
     # Add content for the Conclusion page here
 
+
 # Create a Sidebar Menu
-selected_page = st.sidebar.radio("Navigation", ["Quick Summary", "Methodology and Analysis", "ML Revenue", "ML Expenses and GOP", "Conclusion"])
+selected_page = st.sidebar.radio("Navigation", ["Quick Summary", "Methodology and Analysis", "ML Revenue", "ML Expenses and GOP", "Yearly Prediction", "Conclusion"])
+
+# Update current page using query parameters
+if selected_page != st.session_state.current_page:
+    st.session_state.current_page = selected_page
+    st.experimental_set_query_params(page=selected_page)  # Add this line to update the URL
 
 # Display Selected Page Content
 if selected_page == "Quick Summary":
@@ -343,5 +425,7 @@ elif selected_page == "ML Revenue":
     ml_revenue_page()
 elif selected_page == "ML Expenses and GOP":
     ml_expenses_and_gop_page()
-elif selected_page == "Conclusion":
+elif st.session_state.current_page == "Yearly Prediction":
+    yearly_prediction_page()
+elif st.session_state.current_page == "Conclusion":
     conclusion_page()
