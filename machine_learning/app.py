@@ -391,7 +391,7 @@ def yearly_prediction_page():
         st.dataframe(january_df)
 
     # Dropdown to select the month
-    selected_month = st.selectbox("Select a Month", list(st.session_state.calculated_values.keys()))
+    selected_month = st.selectbox("Select a Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
 
     # Display data for the selected month
     st.header(f"Data for {selected_month}")
