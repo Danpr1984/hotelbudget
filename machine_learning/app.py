@@ -369,7 +369,7 @@ def ml_expenses_and_gop_page():
         st.session_state.calculated_values[selected_month]["Total Expenses"] = total_expenses
 
         gross_operating_profit = total_revenue - total_expenses
-        gop_margin = total_expenses / total_revenue
+        gop_margin = gross_operating_profit / total_revenue
 
         # Display Total Expenses
         st.subheader(f"The total expenses are: ${total_expenses:.2f}") 
@@ -406,13 +406,19 @@ def yearly_prediction_page():
         "July", "August", "September", "October", "November", "December"
     ]
 
+    quarters = [
+        "Quarter 1", "Quarter 2", "Quarter 3", "Quarter 4"
+    ]
+
     # Create tables for each row of months
     num_cols = 3
 
     for i in range(0, len(all_months), num_cols):
         month_slice = all_months[i:i + num_cols]
-        st.subheader(" | ".join(month_slice))
+        st.write(" | ".join(month_slice))
         data = []
+
+
         
         for key in ["Total Revenue", "Rooms Revenue", "F&B Revenue", "Operations Expenses", "Rooms Expenses", "F&B Expenses"]:
             values = []
