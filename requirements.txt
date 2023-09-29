@@ -6,8 +6,6 @@ matplotlib
 feature-engine
 scikit-learn
 xgboost
-yellowbrick
-openpyxl
 ydata_profiling
 ipywidgets
 joblib
