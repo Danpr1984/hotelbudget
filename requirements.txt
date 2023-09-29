@@ -11,3 +11,4 @@ openpyxl
 ydata_profiling
 ipywidgets
 joblib
+streamlit 
