@@ -108,9 +108,9 @@ def methodology_and_analysis_page():
     st.write("We separated the data to create models separately, focusing on the variables needed for each model.")
 
 # Load the occupancy model
-occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
-fb_occ_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_occ_model.pkl')
-fb_revenue_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_revenue_model.pkl')
+occupancy_model = joblib.load('/workspace/hotelbudget/models/occupancy_model.pkl') 
+fb_occ_model = joblib.load('/workspace/hotelbudget/models/f&b_occ_model.pkl')
+fb_revenue_model = joblib.load('/workspace/hotelbudget/models/f&b_revenue_model.pkl')
 
 # Define a function to predict occupancy and room revenue
 def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, rainy_season, holidays_local, number_of_rooms, number_of_days, room_rate):
@@ -261,9 +261,9 @@ def ml_revenue_page():
 
 #Expenses Models
 
-op_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/expenses_model.pkl')
-rooms_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/rooms_expenses_model.pkl')
-fb_expenses_model = joblib.load('/workspace/hotelbudget/predictive_models/fb_expenses_model.pkl')
+op_expenses_model = joblib.load('/workspace/hotelbudget/models/expenses_model.pkl')
+rooms_expenses_model = joblib.load('/workspace/hotelbudget/models/rooms_expenses_model.pkl')
+fb_expenses_model = joblib.load('/workspace/hotelbudget/models/fb_expenses_model.pkl')
 
 def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing, maintenance, utilities, systems_communications):
     input_data_ops_exp = {
