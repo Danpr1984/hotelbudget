@@ -69,44 +69,6 @@ def quick_summary_page():
     st.write("Our machine learning model is a powerful tool for hotel management, offering accurate predictions and real-time insights. It empowers hotel managers to make data-driven decisions, optimize costs, and maximize revenue.")
 
 
-def methodology_and_analysis_page():
-    st.title("Methodology and Analysis")
-    
-    # Data Sources
-    st.header("Data Sources")
-    
-    # Real Hotel Data
-    st.subheader("Real Hotel Data")
-    st.write("Our analysis begins with real hotel data sourced from the file 'budgetusd.xlsx'.")
-    
-    # Load the Excel file into a pandas DataFrame
-    excel_file_path = '../budgetusd.xlsx'
-    sheet_name = "Rooms Revenue"
-    df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
-    
-    # Display the real hotel data table
-    st.write("Table: Real Hotel Data")
-    st.dataframe(df_real_hotel_data)  # Display the first few rows of the real hotel data
-    
-    # Synthetic Data
-    st.subheader("Synthetic Data")
-    st.write("To augment our dataset and have more data values, we created synthetic data.")
-    
-    # Load and display the synthetic data table (adjust the path and sheet name accordingly)
-    excel_file_path_synthetic = '../synthetic_data.xlsx'
-    sheet_name_synthetic = "Synthetic Data"
-    df_synthetic_data = pd.read_excel(excel_file_path_synthetic, sheet_name=sheet_name_synthetic)
-    
-    st.write("Table: Synthetic Data")
-    st.dataframe(df_synthetic_data.head())  # Display the first few rows of the synthetic data
-    
-    # Data Preparation
-    st.header("Data Preparation")
-    
-    # Data Separation
-    st.subheader("Data Separation")
-    st.write("We separated the data to create models separately, focusing on the variables needed for each model.")
-
 # Load the occupancy model
 occupancy_model = joblib.load('/workspace/hotelbudget/predictive_models/occupancy_model.pkl')
 fb_occ_model = joblib.load('/workspace/hotelbudget/predictive_models/f&b_occ_model.pkl')
