@@ -1,12 +1,10 @@
 numpy
 pandas
 seaborn
-statsmodels
 matplotlib
 feature-engine
 scikit-learn
 xgboost
-ydata_profiling
 ipywidgets
 joblib
 streamlit 
