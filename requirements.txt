@@ -5,7 +5,6 @@ statsmodels
 matplotlib
 feature-engine
 scikit-learn
-pygwalker
 xgboost
 yellowbrick
 openpyxl
@@ -13,6 +12,4 @@ ydata_profiling
 ipywidgets
 prophet
 pingouin
-ppscore
 joblib
-chardet
