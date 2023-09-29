@@ -10,5 +10,4 @@ yellowbrick
 openpyxl
 ydata_profiling
 ipywidgets
-pingouin
 joblib
