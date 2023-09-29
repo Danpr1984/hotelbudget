@@ -7,4 +7,4 @@ scikit-learn
 xgboost
 ipywidgets
 joblib
-streamlit 
+streamlit

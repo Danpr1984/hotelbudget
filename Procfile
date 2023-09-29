@@ -1,1 +1,1 @@
- web: streamlit run machine_learning/app.py
+sh setup.sh && streamlit run app.py
