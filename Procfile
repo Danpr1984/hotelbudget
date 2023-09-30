@@ -1,1 +1,1 @@
-sh setup.sh && streamlit run app.py
+streamlit run machine_learning/app.py
