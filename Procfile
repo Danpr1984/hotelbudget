@@ -1,1 +1,1 @@
-streamlit run machine_learning/app.py
+web: streamlit run machine_learning/app.py
