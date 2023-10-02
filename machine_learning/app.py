@@ -139,7 +139,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real Rooms Revenue Hotel Data")
         st.dataframe(df_real_hotel_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -157,7 +157,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real F&B Revenue Hotel Data")
         st.dataframe(df_fb_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -177,7 +177,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real Expenses Hotel Data")
         st.dataframe(df_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -194,7 +194,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Rooms Expenses Hotel Data")
         st.dataframe(df_rooms_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -211,7 +211,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: F&B Expenses Hotel Data")
         st.dataframe(df_fb_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")    
 
@@ -228,7 +228,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Operations Expenses Hotel Data")
         st.dataframe(df_ops_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")            
 
