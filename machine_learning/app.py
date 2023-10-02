@@ -5,12 +5,12 @@ import os
 
 
 
-# Load the occupancy model
-#occupancy_model = joblib.load('/workspace/hotelbudget/models/occupancy_model.pkl') 
-#fb_occ_model = joblib.load('/workspace/hotelbudget/models/f&b_occ_model.pkl')
-#fb_revenue_model = joblib.load('/workspace/hotelbudget/models/f&b_revenue_model.pkl')
+# #Load the occupancy model
+# occupancy_model = joblib.load('/workspace/hotelbudget/models/occupancy_model.pkl') 
+# fb_occ_model = joblib.load('/workspace/hotelbudget/models/f&b_occ_model.pkl')
+# fb_revenue_model = joblib.load('/workspace/hotelbudget/models/f&b_revenue_model.pkl')
 
-# Load the models using environment variables
+#Load the models using environment variables
 occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
 fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
 fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
@@ -32,6 +32,7 @@ fb_expenses_model = joblib.load(fb_expenses_model_path)
 
 # Use the models as needed in your app
 
+# Set other model paths as needed
 
 # Initialize session state variables for page navigation
 if 'current_page' not in st.session_state:
@@ -288,9 +289,9 @@ def ml_revenue_page():
 
 #Expenses Models
 
-#op_expenses_model = joblib.load('/workspace/hotelbudget/models/expenses_model.pkl')
-#rooms_expenses_model = joblib.load('/workspace/hotelbudget/models/rooms_expenses_model.pkl')
-#fb_expenses_model = joblib.load('/workspace/hotelbudget/models/fb_expenses_model.pkl')
+# op_expenses_model = joblib.load('/workspace/hotelbudget/models/expenses_model.pkl')
+# rooms_expenses_model = joblib.load('/workspace/hotelbudget/models/rooms_expenses_model.pkl')
+# fb_expenses_model = joblib.load('/workspace/hotelbudget/models/fb_expenses_model.pkl')
 
 def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing, maintenance, utilities, systems_communications):
     input_data_ops_exp = {
