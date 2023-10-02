@@ -6,9 +6,13 @@ import os
 
 
 # #Load the occupancy model
-# occupancy_model = joblib.load('/workspace/hotelbudget/models/occupancy_model.pkl') 
-# fb_occ_model = joblib.load('/workspace/hotelbudget/models/f&b_occ_model.pkl')
-# fb_revenue_model = joblib.load('/workspace/hotelbudget/models/f&b_revenue_model.pkl')
+# occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
+# fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
+# fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
+# op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
+# rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
+# fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
+
 
 #Load the models using environment variables
 occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
@@ -103,41 +107,130 @@ def quick_summary_page():
 
 def methodology_and_analysis_page():
     st.title("Methodology and Analysis")
+
+    # Data Separation
+    st.subheader("Data Separation:")
+    st.write("We separated the data from the main source, monthly P&L's for 48 months to create models separately, focusing on the variables needed for each model.")
     
     # Data Sources
-    st.header("Data Sources")
+    st.subheader("Data Sources:")
     
     # Real Hotel Data
-    st.subheader("Real Hotel Data")
+    st.subheader("Revenue")
     st.write("Our analysis begins with real hotel data sourced from the file 'budgetusd.xlsx'.")
     
+    # # Load the Excel file into a pandas DataFrame
+    # excel_file_path = 'budgetusd.xlsx'
+    # sheet_name = "Rooms Revenue"
+    # df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
+    
+
     # Load the Excel file into a pandas DataFrame
-    excel_file_path = '../budgetusd.xlsx'
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
     sheet_name = "Rooms Revenue"
-    df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
+
+    try:
+        df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Display the real hotel data table
-    st.write("Table: Real Hotel Data")
-    st.dataframe(df_real_hotel_data)  # Display the first few rows of the real hotel data
+    # Display the first few rows of the DataFrame
+            # Display the real hotel data table
+        
+        st.write("*** To augment our dataset and have more data values, we created synthetic data, not considering the Covid-19 years since this would affect drastically a prediction")
+        st.subheader("Table: Real Rooms Revenue Hotel Data")
+        st.dataframe(df_real_hotel_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+    st.write("Once we have predicted our Occupancy, we calculate Rooms Revenue by multiplying these values: predicted_occupancy * number_of_rooms * number_of_days * room_rate ")        
+    st.write("")
+
+        # Load the Excel file into a pandas DataFrame
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
+    sheet_name = "F&B Revenue"
+
+    try:
+        df_fb_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Synthetic Data
-    st.subheader("Synthetic Data")
-    st.write("To augment our dataset and have more data values, we created synthetic data.")
+    # Display F&B Revenue table
+        st.subheader("Table: Real F&B Revenue Hotel Data")
+        st.dataframe(df_fb_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+    st.subheader("Expenses")
+    st.write("We separate the expenses by Rooms, Food and Beverage and othe operations expenses")
+
+    # Load the Excel file into a pandas DataFrame
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
+    sheet_name = "Expenses"
+
+    try:
+        df_expenses_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Load and display the synthetic data table (adjust the path and sheet name accordingly)
-    excel_file_path_synthetic = '../synthetic_data.xlsx'
-    sheet_name_synthetic = "Synthetic Data"
-    df_synthetic_data = pd.read_excel(excel_file_path_synthetic, sheet_name=sheet_name_synthetic)
+    # Display the first few rows of the DataFrame
+            # Display the real hotel data table
+                
+        st.subheader("Table: Real Expenses Hotel Data")
+        st.dataframe(df_expenses_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+    # Load the Excel file into a pandas DataFrame
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
+    sheet_name = "Rooms Expenses"
+
+    try:
+        df_rooms_expenses_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    st.write("Table: Synthetic Data")
-    st.dataframe(df_synthetic_data.head())  # Display the first few rows of the synthetic data
+    # Display the first few rows of the DataFrame
+            # Display the real hotel data table
+                
+        st.subheader("Table: Rooms Expenses Hotel Data")
+        st.dataframe(df_rooms_expenses_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+
+    # Load the Excel file into a pandas DataFrame
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
+    sheet_name = "F&B Expenses"
+
+    try:
+        df_fb_expenses_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Data Preparation
-    st.header("Data Preparation")
+    # Display the first few rows of the DataFrame
+            # Display the real hotel data table
+                
+        st.subheader("Table: F&B Expenses Hotel Data")
+        st.dataframe(df_fb_expenses_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")    
+
+        # Load the Excel file into a pandas DataFrame
+    excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
+    sheet_name = "Indirect_Expenses"
+
+    try:
+        df_ops_expenses_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Data Separation
-    st.subheader("Data Separation")
-    st.write("We separated the data to create models separately, focusing on the variables needed for each model.")
+    # Display the first few rows of the DataFrame
+            # Display the real hotel data table
+                
+        st.subheader("Table: Operations Expenses Hotel Data")
+        st.dataframe(df_ops_expenses_data.head(24))  # Display the first few rows of the real hotel data
+    except FileNotFoundError:
+        st.error("File not found. Please make sure 'budgetusd.xlsx' is in the root directory.")
+    except Exception as e:
+        st.error(f"An error occurred: {e}")            
 
 
 # Define a function to predict occupancy and room revenue
@@ -289,9 +382,6 @@ def ml_revenue_page():
 
 #Expenses Models
 
-# op_expenses_model = joblib.load('/workspace/hotelbudget/models/expenses_model.pkl')
-# rooms_expenses_model = joblib.load('/workspace/hotelbudget/models/rooms_expenses_model.pkl')
-# fb_expenses_model = joblib.load('/workspace/hotelbudget/models/fb_expenses_model.pkl')
 
 def predict_ops_expenses(total_revenue, total_wages, insurances, transport, marketing, maintenance, utilities, systems_communications):
     input_data_ops_exp = {
