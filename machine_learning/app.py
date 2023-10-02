@@ -101,7 +101,6 @@ def quick_summary_page():
     st.markdown("- **Revenue Maximization**: Identify opportunities to increase revenue through targeted marketing or pricing adjustments.")
     
     # Conclusion
-    st.header("Conclusion")
     st.write("Our machine learning model is a powerful tool for hotel management, offering accurate predictions and real-time insights. It empowers hotel managers to make data-driven decisions, optimize costs, and maximize revenue.")
 
 
@@ -573,7 +572,14 @@ def yearly_prediction_page():
 def conclusion_page():
     st.title("Conclusion")
     # Add content for the Conclusion page here
-
+    
+    
+    st.subheader("Elevating Hotel Financial Strategy")
+    st.write("Our journey through data analysis and model development culminates in a resounding affirmation of our predictive models' effectiveness. With exceptional R2, MAE, and MSAE scores, we have harnessed the power of data to bolster budget forecasting for hotels.")
+    st.write("These models are not just theoretical constructs but practical tools for the hotel industry. By accurately forecasting revenue, occupancy rates, and expenses, they empower hoteliers to make strategic decisions with confidence. Whether optimizing pricing strategies or efficiently allocating resources, our models provide a competitive edge in an ever-evolving market.")
+    st.write("In an industry where adaptability is key, these models offer a path to resilience and prosperity. By integrating data-driven insights into their financial strategies, hotels can navigate uncertainties, enhance profitability, and secure a promising future.")
+    
+    
 
 # Create a Sidebar Menu
 selected_page = st.sidebar.radio("Navigation", ["Quick Summary", "Methodology and Analysis", "ML Revenue", "ML Expenses and GOP", "Yearly Prediction", "Conclusion"])
