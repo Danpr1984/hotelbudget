@@ -75,7 +75,7 @@ def quick_summary_page():
     
     # Introduction to the ML Model
     st.header("Machine Learning Model Overview")
-    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data. This application is now working with real data from a 9 bedroom boutique hotel located in the pacific coast of Nicaragua. The models could be adapted to other hotel businesses if they have enought data.")
+    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data. This application is now working with real data from a 9 bedroom boutique hotel located in the Pacific coast of Nicaragua. The models could be adapted to other hotel businesses if they have enought data.")
     
     # Model Benefits
     st.header("Benefits of the ML Model")
