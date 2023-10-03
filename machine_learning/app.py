@@ -5,33 +5,33 @@ import os
 
 
 # #Load the occupancy model
-occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
-fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
-fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
-op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
-rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
-fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
+# occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
+# fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
+# fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
+# op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
+# rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
+# fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
 
 
 #Load the models using environment variables
-# occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
-# fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
-# fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
-# op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
-# rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
-# fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
+occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
+fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
+fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
+op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
+rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
+fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
 
-# # Check if any of the model paths are None (not found in environment variables)
-# if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
-#     raise ValueError("One or more model paths are missing in environment variables.")
+# Check if any of the model paths are None (not found in environment variables)
+if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
+    raise ValueError("One or more model paths are missing in environment variables.")
 
-# # Load the models using the specified paths
-# occupancy_model = joblib.load(occupancy_model_path)
-# fb_occ_model = joblib.load(fb_occ_model_path)
-# fb_revenue_model = joblib.load(fb_revenue_model_path)
-# op_expenses_model = joblib.load(op_expenses_model_path)
-# rooms_expenses_model = joblib.load(rooms_expenses_model_path)
-# fb_expenses_model = joblib.load(fb_expenses_model_path)
+# Load the models using the specified paths
+occupancy_model = joblib.load(occupancy_model_path)
+fb_occ_model = joblib.load(fb_occ_model_path)
+fb_revenue_model = joblib.load(fb_revenue_model_path)
+op_expenses_model = joblib.load(op_expenses_model_path)
+rooms_expenses_model = joblib.load(rooms_expenses_model_path)
+fb_expenses_model = joblib.load(fb_expenses_model_path)
 
 # Use the models as needed in your app
 
