@@ -75,7 +75,7 @@ def quick_summary_page():
     
     # Introduction to the ML Model
     st.header("Machine Learning Model Overview")
-    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data. This application is now working with real data from a 9 bedroom boutique hotel located in the Pacific coast of Nicaragua. The models could be adapted to other hotel businesses if they have enought data.")
+    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data. This application is now working with real data from a 9 bedroom boutique hotel located in the Pacific coast of Nicaragua. The models could be adapted to other hotel businesses with different scales if they have enough data to fit the model.")
     
     # Model Benefits
     st.header("Benefits of the ML Model")
@@ -358,7 +358,7 @@ def ml_revenue_page():
     seasonality_value = {"Low": 0, "Medium": 1, "High": 2}[seasonality_label]
 
     # Marketing
-    marketing_value = st.slider("Marketing Investment USD$ (0-500)", 0, 500, step=50)
+    marketing_value = st.slider("Marketing Spending USD$ (0-500)", 0, 500, step=25)
 
     # Average Room Rate
     average_room_rate_value = st.number_input("Average Room Rate USD$", min_value=50, max_value=120, value=100)
