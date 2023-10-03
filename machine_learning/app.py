@@ -4,38 +4,37 @@ import joblib
 import os
 
 
-#Load the occupancy model
-occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
-fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
-fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
-op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
-rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
-fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
+# # #Load the occupancy model
+# occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
+# fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
+# fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
+# op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
+# rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
+# fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
 
 
-# #Load the models using environment variables
-# occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
-# fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
-# fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
-# op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
-# rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
-# fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
+#Load the models using environment variables
+occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
+fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
+fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
+op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
+rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
+fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
 
-# # Check if any of the model paths are None (not found in environment variables)
-# if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
-#     raise ValueError("One or more model paths are missing in environment variables.")
+# Check if any of the model paths are None (not found in environment variables)
+if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
+    raise ValueError("One or more model paths are missing in environment variables.")
 
-# # Load the models using the specified paths
-# occupancy_model = joblib.load(occupancy_model_path)
-# fb_occ_model = joblib.load(fb_occ_model_path)
-# fb_revenue_model = joblib.load(fb_revenue_model_path)
-# op_expenses_model = joblib.load(op_expenses_model_path)
-# rooms_expenses_model = joblib.load(rooms_expenses_model_path)
-# fb_expenses_model = joblib.load(fb_expenses_model_path)
+# Load the models using the specified paths
+occupancy_model = joblib.load(occupancy_model_path)
+fb_occ_model = joblib.load(fb_occ_model_path)
+fb_revenue_model = joblib.load(fb_revenue_model_path)
+op_expenses_model = joblib.load(op_expenses_model_path)
+rooms_expenses_model = joblib.load(rooms_expenses_model_path)
+fb_expenses_model = joblib.load(fb_expenses_model_path)
 
 # Use the models as needed in your app
 
-# Set other model paths as needed
 
 # Initialize session state variables for page navigation
 if 'current_page' not in st.session_state:
@@ -70,8 +69,6 @@ if 'calculated_values' not in st.session_state:
 if 'selected_month' not in st.session_state:
     st.session_state.selected_month = "January"
 
-
-# Define Pages
 # Define Quick Summary Page
 def quick_summary_page():
     st.title("Quick Summary")
@@ -197,11 +194,6 @@ def pipeline_random_forest_reg():
     st.subheader("Revenue")
     st.write("Our analysis begins with real hotel data sourced from the file 'budgetusd.xlsx'.")
     
-    # # Load the Excel file into a pandas DataFrame
-    # excel_file_path = 'budgetusd.xlsx'
-    # sheet_name = "Rooms Revenue"
-    # df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
-    
 
     # Load the Excel file into a pandas DataFrame
     excel_file_path = '/workspace/hotelbudget/budgetusd.xlsx'
@@ -210,7 +202,6 @@ def pipeline_random_forest_reg():
     try:
         df_real_hotel_data = pd.read_excel(excel_file_path, sheet_name=sheet_name)
     
-    # Display the first few rows of the DataFrame
             # Display the real hotel data table
         
         st.write("*** To augment our dataset and have more data values, we created synthetic data, not considering the Covid-19 years since this would affect drastically a prediction")
