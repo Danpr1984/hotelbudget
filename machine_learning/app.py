@@ -4,35 +4,34 @@ import joblib
 import os
 
 
+#Load the occupancy model
+occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
+fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
+fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
+op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
+rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
+fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
 
-# #Load the occupancy model
-# occupancy_model = joblib.load('/workspace/hotelbudget/occupancy_model.pkl') 
-# fb_occ_model = joblib.load('/workspace/hotelbudget/f&b_occ_model.pkl')
-# fb_revenue_model = joblib.load('/workspace/hotelbudget/f&b_revenue_model.pkl')
-# op_expenses_model = joblib.load('/workspace/hotelbudget/expenses_model.pkl')
-# rooms_expenses_model = joblib.load('/workspace/hotelbudget/rooms_expenses_model.pkl')
-# fb_expenses_model = joblib.load('/workspace/hotelbudget/fb_expenses_model.pkl')
 
+# #Load the models using environment variables
+# occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
+# fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
+# fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
+# op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
+# rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
+# fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
 
-#Load the models using environment variables
-occupancy_model_path = os.environ.get('OCCUPANCY_MODEL_PATH')
-fb_occ_model_path = os.environ.get('FB_OCC_MODEL_PATH')
-fb_revenue_model_path = os.environ.get('FB_REVENUE_MODEL_PATH')
-op_expenses_model_path = os.environ.get('OP_EXPENSES_MODEL_PATH')
-rooms_expenses_model_path = os.environ.get('ROOMS_EXPENSES_MODEL_PATH')
-fb_expenses_model_path = os.environ.get('FB_EXPENSES_MODEL_PATH')
+# # Check if any of the model paths are None (not found in environment variables)
+# if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
+#     raise ValueError("One or more model paths are missing in environment variables.")
 
-# Check if any of the model paths are None (not found in environment variables)
-if None in [occupancy_model_path, fb_occ_model_path, fb_revenue_model_path, op_expenses_model_path, rooms_expenses_model_path, fb_expenses_model_path]:
-    raise ValueError("One or more model paths are missing in environment variables.")
-
-# Load the models using the specified paths
-occupancy_model = joblib.load(occupancy_model_path)
-fb_occ_model = joblib.load(fb_occ_model_path)
-fb_revenue_model = joblib.load(fb_revenue_model_path)
-op_expenses_model = joblib.load(op_expenses_model_path)
-rooms_expenses_model = joblib.load(rooms_expenses_model_path)
-fb_expenses_model = joblib.load(fb_expenses_model_path)
+# # Load the models using the specified paths
+# occupancy_model = joblib.load(occupancy_model_path)
+# fb_occ_model = joblib.load(fb_occ_model_path)
+# fb_revenue_model = joblib.load(fb_revenue_model_path)
+# op_expenses_model = joblib.load(op_expenses_model_path)
+# rooms_expenses_model = joblib.load(rooms_expenses_model_path)
+# fb_expenses_model = joblib.load(fb_expenses_model_path)
 
 # Use the models as needed in your app
 
@@ -79,7 +78,7 @@ def quick_summary_page():
     
     # Introduction to the ML Model
     st.header("Machine Learning Model Overview")
-    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data.")
+    st.write("Our machine learning model is designed to predict key indicators for hotel management based on real-world data. This application is now working with real data from a 9 bedroom boutique hotel located in the pacific coast of Nicaragua. The models could be adapted to other hotel businesses if they have enought data.")
     
     # Model Benefits
     st.header("Benefits of the ML Model")
@@ -107,13 +106,93 @@ def quick_summary_page():
 def methodology_and_analysis_page():
     st.title("Methodology and Analysis")
 
-    # Data Separation
-    st.subheader("Data Separation:")
-    st.write("We separated the data from the main source, monthly P&L's for 48 months to create models separately, focusing on the variables needed for each model.")
+    st.write("For this model, we employed regression algorithms due to their effectiveness in predicting continuous numeric values. Regression techniques were chosen to estimate key financial indicators such as revenue, expenses, and occupancy percentages which ultimately will provide a Gross Operating Profit result.")
+
+            
+    st.subheader("Pipelines")
+
+    st.write("To enhance model performance, rigorous data cleaning and preprocessing were performed to ensure high data quality. Feature engineering techniques were employed to extract meaningful insights from raw data. Hyperparameter optimization fine-tuned model parameters, while cross-validation with gradient boosting ensured robustness and minimized overfitting.")
     
+    st.subheader("**Occupancy % Model:**")
+    st.code("""
+def pipeline_random_forest_reg():
+    pipeline = Pipeline([
+        ("feature_scaling", StandardScaler()),
+        ("model", ExtraTreesRegressor(random_state=101)),
+    ])        return pipeline
+            """)
+    st.write("**Model Evaluation**")
+    
+    st.write("**Train Set**")
+    st.write(f"R2 Score: 1.00 ")
+    st.write(f"Mean Absolute Error: 0.0")
+    st.write(f"Mean Squared Error: 0.0 ")
+    st.write(f"Root Mean Squared Error: 0.0")
+    
+    st.write("**Test Set**")
+    st.write(f"R2 Score: 0.944 ")
+    st.write(f"Mean Absolute Error: 0.039")
+    st.write(f"Mean Squared Error: 0.003")
+    st.write(f"Root Mean Squared Error: 0.056")
+
+    st.write("**Features the model was trained on for Occupancy %**")
+    st.text("['Marketing', 'Seasonality', 'Average Room Rate', 'Local Rainy Season', 'Holidays Local']")
+
+    st.subheader( "**F&B Revenue Model:**")
+    st.code("""
+def pipeline_random_forest_reg():
+    pipeline = Pipeline([
+        ("feature_scaling", StandardScaler()),
+        ("model", RandomForestRegressor(random_state=101)),
+    ])
+    return pipeline
+        """)
+    st.write("**Model Evaluation**")
+
+    st.write("**Train Set**")
+    st.write(f"R2 Score: 0.964 ")
+    st.write(f"Mean Absolute Error: 553.451")
+    st.write(f"Mean Squared Error: 588924.729")
+    st.write(f"Root Mean Squared Error: 767.414")
+
+    st.write("**Test Set**")
+    st.write(f"R2 Score: 0.828")
+    st.write(f"Mean Absolute Error: 1219.316")
+    st.write(f"Mean Squared Error: 2366472.62")
+    st.write(f"Root Mean Squared Error: 767.414")
+
+    st.write("**Features the model was trained on for F&B Revenue**")
+    st.text("['Rooms Revenue', 'Seasonality', 'Holidays Local', 'Percentage Rooms Occ %', 'Percentage F&B Occ %']")
+
+    st.subheader("**Expenses Model:**")
+    st.code("""
+def pipeline_random_forest_reg():
+    pipeline = Pipeline([
+        ("feature_scaling", StandardScaler()),
+        ("model", RandomForestRegressor(random_state=101)),
+    ])
+    return pipeline
+        """)
+    st.write("**Model Evaluation**")
+
+    st.write("**Train Set**")
+    st.write(f"R2 Score: 0.976")
+    st.write(f"Mean Absolute Error: 217.977")
+    st.write(f"Mean Squared Error: 93848.892")
+    st.write(f"Root Mean Squared Error: 306.348")
+
+    st.write("**Test Set**")
+    st.write(f"R2 Score: 0.915")
+    st.write(f"Mean Absolute Error: 456.379")
+    st.write(f"Mean Squared Error: 314733.454")
+    st.write(f"Root Mean Squared Error: 561.011")
+
+    st.write("**Features the model was trained on for Expenses**")
+    st.text("['Total Revenue', 'Total Wages', 'Insuraces', 'Transport', 'Marketing', 'Maintenance', 'Utilities Expenses', 'Systems & Communications']")
+
     # Data Sources
-    st.subheader("Data Sources:")
-    
+    st.subheader("Data Source:")
+    st.write("We separated the data from the main source, a hotel's monthly P&L's of 48 months to create models separately, focusing on the variables needed for each model.")
     # Real Hotel Data
     st.subheader("Revenue")
     st.write("Our analysis begins with real hotel data sourced from the file 'budgetusd.xlsx'.")
@@ -138,7 +217,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real Rooms Revenue Hotel Data")
         st.dataframe(df_real_hotel_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -156,7 +235,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real F&B Revenue Hotel Data")
         st.dataframe(df_fb_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -176,7 +255,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Real Expenses Hotel Data")
         st.dataframe(df_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -193,7 +272,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: Rooms Expenses Hotel Data")
         st.dataframe(df_rooms_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")
 
@@ -210,7 +289,7 @@ def methodology_and_analysis_page():
         st.subheader("Table: F&B Expenses Hotel Data")
         st.dataframe(df_fb_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
         st.error(f"An error occurred: {e}")    
 
@@ -227,11 +306,11 @@ def methodology_and_analysis_page():
         st.subheader("Table: Operations Expenses Hotel Data")
         st.dataframe(df_ops_expenses_data.head(24))  # Display the first few rows of the real hotel data
     except FileNotFoundError:
-        st.error("Files not loading at the moment. Continue to ML Revenue Page to make predictions")
+        st.error("Authorization is required to see data values. Continue to ML Revenue Page to make predictions")
     except Exception as e:
-        st.error(f"An error occurred: {e}")            
+        st.error(f"An error occurred: {e}")           
 
-
+        
 # Define a function to predict occupancy and room revenue
 def predict_occupancy_and_revenue(marketing, seasonality, average_room_rate, rainy_season, holidays_local, number_of_rooms, number_of_days, room_rate):
     # Calculate occupancy percentage
@@ -277,10 +356,8 @@ def predict_fb_revenue(room_revenue, seasonality, holidays_local, rooms_occupanc
 
 # Define ML Revenue Page
 def ml_revenue_page():
-    st.header("ML Revenue Page")
-
     # Input widgets for occupancy prediction
-    st.subheader("Occupancy % & Revenue Prediction")
+    st.subheader("Occupancy Percentage & Revenue Prediction")
 
     selected_month = st.selectbox("Select a Month", ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"])
 
@@ -325,13 +402,8 @@ def ml_revenue_page():
             room_rate,
         )
     
-        st.subheader("Predicted Occupancy %")
-        st.write(f"The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%")
-
-        st.subheader("Predicted Room Revenue")
-        st.write(f"The predicted room revenue is: ${room_revenue:.2f}")
-
-
+        st.write(f"**The predicted occupancy percentage is: {predicted_occupancy * 100:.2f}%**")
+        st.write(f"**The predicted room revenue is: ${room_revenue:.2f}**")
 
 # Calculate F&B Occupancy using the custom function
         predicted_fb_occupancy = predict_fb_occupancy(
@@ -353,8 +425,7 @@ def ml_revenue_page():
             predicted_occupancy, 
             predicted_fb_occupancy)
 
-        st.subheader("Predicted F&B Revenue")
-        st.write(f"The predicted F&B revenue is: ${fb_revenue:.2f}")
+        st.write(f"**The predicted F&B revenue is: ${fb_revenue:.2f}**")
 
     # Calculate Total Revenue
         total_revenue = room_revenue + fb_revenue
@@ -367,7 +438,8 @@ def ml_revenue_page():
 
 # Display Total Revenue
         st.subheader("Total Revenue")
-        st.write(f"The total revenue is: ${total_revenue:.2f}")
+        st.write(f"**The total revenue is: ${total_revenue:.2f}**")
+        st.write("****Please note that the results are valid using data from a specific business so results are valid for that specific business. Data from other businesses could also be fed into the models.**")
 
         # Update the st.session_state.calculated_values dictionary
         if selected_month not in st.session_state.calculated_values:
@@ -427,16 +499,16 @@ def ml_expenses_and_gop_page():
     number_of_days = st.session_state.number_of_days
 
     # Display Total Revenue
-    st.write(f"The total revenue is: ${total_revenue:.2f}")
+    st.write(f"The total revenue is: **${total_revenue:.2f}**")
 
     # Display Rooms Revenue
-    st.write(f"The rooms revenue is: ${room_revenue:.2f}")
+    st.write(f"The rooms revenue is: **${room_revenue:.2f}**")
 
     # Display Rooms Revenue
-    st.write(f"The F&B revenue is: ${fb_revenue:.2f}")
+    st.write(f"The F&B revenue is: **${fb_revenue:.2f}**")
 
     # Input widgets for manual input
-    st.write(f"Fill expenses projection for {number_of_days} days")
+    st.write(f"Fill expenses projection for **{number_of_days} days**")
 
     # Manual input for Marketing Investment
     marketing = st.number_input("Marketing Investment", marketing_value)
@@ -466,19 +538,19 @@ def ml_expenses_and_gop_page():
         marketing, maintenance, utilities, systems_communications)
 
         
-        st.write(f"The estimated operational expenses are: ${ops_expenses:.2f}")
+        st.write(f"**The estimated operational expenses are: ${ops_expenses:.2f}**")
 
         # Calculate room expenses using the custom function
         room_expenses = predict_rooms_expenses(room_revenue)
 
     # Display Room Expenses
-        st.write(f"The predicted room expenses are: ${room_expenses:.2f}")
+        st.write(f"**The predicted room expenses are: ${room_expenses:.2f}**")
 
     # Calculate f&b expenses using the custom function
         fb_expenses = predict_fb_expenses(fb_revenue)  
 
     # Display Room Expenses
-        st.write(f"The predicted f&b expenses are: ${fb_expenses:.2f}")   
+        st.write(f"**The predicted f&b expenses are: ${fb_expenses:.2f}**")   
 
         total_expenses =  ops_expenses + room_expenses + fb_expenses  
 
@@ -489,10 +561,10 @@ def ml_expenses_and_gop_page():
         gop_margin = gross_operating_profit / total_revenue
 
         # Display Total Expenses
-        st.subheader(f"The total expenses are: ${total_expenses:.2f}") 
+        st.subheader(f"**The total expenses are: ${total_expenses:.2f}**") 
 
         # Display Total Expenses
-        st.subheader(f"The total GOP is: ${gross_operating_profit:.2f} representing a margin of: {gop_margin * 100:.2f}%")
+        st.subheader(f"**The total GOP is: ${gross_operating_profit:.2f} representing a margin of: {gop_margin * 100:.2f}%**")
 
         # Update the st.session_state.calculated_values dictionary
         if selected_month not in st.session_state.calculated_values:
