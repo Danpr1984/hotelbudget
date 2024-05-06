@@ -670,8 +670,8 @@ st.write("----")
 st.write("")    
 st.write("")
 
-st.markdown("**Tool by Daniel Porras**")
-st.markdown("Contact Email: [dapr247@gmail.com](mailto:dapr247@gmail.com)")
+st.markdown("**Tool developed by Amiqa**")
+st.markdown("Contact Email: [hello@amiqa.io](mailto:hello@amiqa.io)")
 st.markdown("Explore the possibilities with our innovative tool.  We're here to assist you in achieving your goals and making your tasks easier. For inquiries, feedback, or support, please reach out to us via email.")
 st.markdown("Let's collaborate and transform your ideas into reality!")
     
